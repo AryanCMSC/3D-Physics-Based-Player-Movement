@@ -1,0 +1,93 @@
+[gd_scene load_steps=9 format=3 uid="uid://cvkpiil8726ne"]
+
+[ext_resource type="Script" uid="uid://cgypjxrnwvtiu" path="res://Scripts/character_body_3d.gd" id="1_jjgbg"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7u77a"]
+sky_top_color = Color(0.0698439, 0.450911, 0.802158, 1)
+sky_horizon_color = Color(0.497855, 0.633162, 0.667347, 1)
+ground_bottom_color = Color(0.0543476, 0.214506, 0, 1)
+ground_horizon_color = Color(0.497855, 0.633162, 0.667347, 1)
+energy_multiplier = 1.45
+
+[sub_resource type="Sky" id="Sky_jjgbg"]
+sky_material = SubResource("ProceduralSkyMaterial_7u77a")
+
+[sub_resource type="Environment" id="Environment_bo1nx"]
+background_mode = 2
+sky = SubResource("Sky_jjgbg")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jjgbg"]
+albedo_color = Color(0.449017, 0.232616, 0.129409, 1)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7u77a"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_7u77a"]
+albedo_color = Color(0, 0, 0, 1)
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_jjgbg"]
+
+[node name="Main" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_bo1nx")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.626076, 0.69225, -0.358912, -0.471303, 0.0307497, 0.881435, 0.62121, 0.721002, 0.307008, 0, 54, 0)
+shadow_enabled = true
+
+[node name="Map Assets" type="CSGCombiner3D" parent="."]
+use_collision = true
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, -2, 4.8, 1)
+size = Vector3(12, 1, 10)
+
+[node name="CSGCylinder3D" type="CSGCylinder3D" parent="Map Assets/CSGBox3D"]
+transform = Transform3D(0.999929, -0.0118152, 0.00147373, 0.0118415, 0.999742, -0.0193854, -0.00124428, 0.0194015, 0.999811, -0.0590777, 2.04234, -2.30506)
+operation = 2
+radius = 4.0
+height = 5.52777
+sides = 19
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="Map Assets"]
+size = Vector3(34, 1, 130)
+material = SubResource("StandardMaterial3D_jjgbg")
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(3.59965, 0, 0, 0, 2.17165, 0, 0, 0, 7.16396, -13.617, 1.5, 16.762)
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 6.999, 4)
+size = Vector3(1, 0.001, 1)
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 3.4995, 2)
+size = Vector3(1, 0.001, 1)
+
+[node name="Player" type="CharacterBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.38311, -0.46676, 18.3138)
+script = ExtResource("1_jjgbg")
+
+[node name="Capsule" type="CollisionShape3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.99778, -0.0942116)
+shape = SubResource("CapsuleShape3D_7u77a")
+
+[node name="Player Body" type="CSGCylinder3D" parent="Player"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.99778, -0.0942078)
+material = SubResource("StandardMaterial3D_7u77a")
+
+[node name="Camera Pivot" type="Node3D" parent="Player"]
+unique_name_in_owner = true
+transform = Transform3D(0.297635, -0.080333, 0.951294, 0.251207, 0.967928, 0.00314178, -0.921037, 0.238036, 0.30827, -9.53674e-07, 2.697, -0.127163)
+
+[node name="SpringArm3D" type="SpringArm3D" parent="Player/Camera Pivot"]
+unique_name_in_owner = true
+transform = Transform3D(-0.967239, 0.252612, 0.025206, 0.253577, 0.966103, 0.0484113, -0.0121224, 0.053217, -0.998509, 0, 0, 0)
+shape = SubResource("SphereShape3D_jjgbg")
+spring_length = 0.0
+
+[node name="Camera" type="Camera3D" parent="Player/Camera Pivot/SpringArm3D"]
+unique_name_in_owner = true
+transform = Transform3D(1, 4.90807e-07, 6.25849e-07, 9.31323e-10, 1, -3.81842e-08, -2.98023e-08, 8.84756e-09, 1, 0, 0, 0)
