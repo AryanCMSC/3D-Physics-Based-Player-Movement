@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=3 uid="uid://cvkpiil8726ne"]
+[gd_scene load_steps=8 format=3 uid="uid://cvkpiil8726ne"]
 
 [ext_resource type="PackedScene" uid="uid://dbwogjkxc6f7a" path="res://Scenes/playerv2.tscn" id="1_jjgbg"]
 [ext_resource type="PackedScene" uid="uid://dj3dtyg3yb37v" path="res://Scenes/CSGStairMaker3D.tscn" id="2_bo1nx"]
@@ -21,6 +21,8 @@ glow_enabled = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jjgbg"]
 albedo_color = Color(0.449017, 0.232616, 0.129409, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bo1nx"]
 
 [node name="World" type="Node3D"]
 
@@ -68,7 +70,7 @@ transform = Transform3D(5.4569, 0, 0, 0, 0.0209952, 0, 0, 0, 5.7276, -3.60998, 1
 size = Vector3(2, 16, 1)
 
 [node name="CSGBox3D11" type="CSGBox3D" parent="Map Assets"]
-transform = Transform3D(-4.90056, 0, 0, 0, 0.00035264, 0, 0, 0, 29.5249, -7.66462, 13.5405, -14.7167)
+transform = Transform3D(-4.90056, 0, 0, 0, 0.00035264, 0, 0, 0, 29.5249, -7.66462, 13.6819, -14.7167)
 size = Vector3(1.26855, 16, 1)
 
 [node name="CSGBox3D10" type="CSGBox3D" parent="Map Assets"]
@@ -79,6 +81,38 @@ transform = Transform3D(1, 0, 0, 0, 5.3352, 0, 0, 0, 1, 10.6308, 3.1676, -35)
 
 [node name="CSGBox3D13" type="CSGBox3D" parent="Map Assets"]
 transform = Transform3D(3.1, 0, 0, 0, 5.3352, 0, 0, 0, 3.4, 6.08409, 3.1676, -40)
+
+[node name="CSGBox3D14" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(18, 0, 0, 0, 5.85, 0, 0, 0, 1.5, 0, 3.425, 46)
+
+[node name="CSGBox3D15" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(-7.86805e-07, 0, 1.5, 0, 5.85, 0, -18, 0, -6.55671e-08, 8.41741, 3.425, 54.3)
+
+[node name="CSGBox3D16" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(0.365086, 0, 0, 0, 4.6, 0, 0, 0, 8.80559, -12.074, 3.59068, -18.9799)
+
+[node name="CSGBox3D17" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(0.365086, 0, 0, 0, 4.6, 0, 0, 0, 8.80559, -6.07399, 3.59068, -28.9799)
+
+[node name="CSGBox3D18" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(0.365086, 0, 0, 0, 4.6, 0, 0, 0, 8.80559, -12.074, 3.59068, -39.9799)
+
+[node name="CSGMesh3D" type="CSGMesh3D" parent="Map Assets"]
+transform = Transform3D(0.365086, 0, 0, 0, 4.6, 0, 0, 0, 8.80559, -3.07399, 3.59068, -51.9799)
+mesh = SubResource("BoxMesh_bo1nx")
+
+[node name="CSGBox3D19" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(-1.59584e-08, 4.6, 0, -0.365086, -2.01072e-07, 0, 0, 0, 8.80559, -2.074, 1.59682, -16.9799)
+
+[node name="CSGBox3D20" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(-0.0862452, 4.57354, 7.23004, -2.34856, 0.170594, -41.4644, -1.72037, -0.462165, 56.2425, 9.926, 1.59682, -61.9799)
+
+[node name="CSGBox3D21" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(-1.89646, -0.0414471, 40.5404, -3.03873, -0.219607, -25.2498, 0.173501, -4.29927, 0.898929, 11.926, 1.22017, -6.9799)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Map Assets/CSGBox3D21"]
+transform = Transform3D(1.10734, -1.78814e-07, -1.8297e-06, 4.09782e-08, 2.58035, -8.19564e-08, -1.38622e-07, -9.31323e-10, 0.158226, -0.344078, -0.414031, -0.50945)
+operation = 2
 
 [node name="PlayerV2" parent="." instance=ExtResource("1_jjgbg")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 2, 2)

@@ -6,15 +6,20 @@ extends CharacterBody3D
 @onready var standing_col: CollisionShape3D = $StandingCol
 @onready var crouching_collision: CollisionShape3D = $CrouchingCollision
 @onready var crouch_ray: RayCast3D = $crouch_ray
-@onready var camera_3d: Camera3D = $Head/head_bobber/Camera3D
-@onready var head_bobber: Node3D = $Head/head_bobber
+@onready var camera_3d: Camera3D = $Head/wall_run_cam/head_bobber/Camera3D
+@onready var head_bobber: Node3D = $Head/wall_run_cam/head_bobber
 @onready var player_v2: CharacterBody3D = $"."
+@onready var wall_run_cam: Node3D = $Head/wall_run_cam
+@onready var wall_check_ray_highR: RayCast3D = $WallCheckRayHighR
+@onready var wall_check_ray_lowR: RayCast3D = $WallCheckRayLowR
+@onready var wall_check_ray_highL: RayCast3D = $WallCheckRayHighL
+@onready var wall_check_ray_lowL: RayCast3D = $WallCheckRayLowL
 
 # speed and movement variables
 
-@export var current_speed := 5.0
-const walking_speed := 5.0
-const sprinting_speed := 10.0
+@export var current_speed := 6.0
+const walking_speed := 6.0
+const sprinting_speed := 11.0
 const crouching_speed := 3.0
 const JUMP_VELOCITY := 5
 const dashing_speed := 30
@@ -34,7 +39,22 @@ var crouching := false
 var sliding := false
 var dashing := false
 var can_dash := true
+var can_wallrun := false
+var wallrunning := false
+var wallrun_jump := false
 
+
+# wallrun
+
+var wallrun_delay := 0.2
+@onready var wallrun_delay_default := wallrun_delay
+var wallrun_angle := 15
+var wallrun_current_angle := 0
+var side := ""
+var wall_jump_horizontal := 1.5
+var wall_jump_vertical := 0.75
+var wall_jump_factor := 0.4
+var wall_jump_dir := Vector3.ZERO
 # stairs
 
 const MAX_STEP_HEIGHT := 0.5
@@ -45,10 +65,14 @@ var _last_frame_was_on_floor := -INF
 # sliding variables
 
 var slide_timer := 0.0
-var slider_time_max := 1.2
+var slider_time_max := 1.0
 var slide_vector := Vector2.ZERO
-var slide_speed := 13.0
-
+var slide_speed := 12.0
+var slope_acceleration := 3.0  
+var max_slope_speed := 30.0   
+var current_slide_speed := 12.0
+var uphill_deceleration := 10.0 
+var min_slide_speed := 1.0 
 # headbobbing variables
 
 const head_bobbing_sprinting_speed := 22
@@ -80,6 +104,32 @@ func _input(event: InputEvent) -> void:
 		head.rotate_x(deg_to_rad(-event.relative.y * mouse_sens))
 		head.rotation.x = clamp(head.rotation.x, deg_to_rad(-89), deg_to_rad(89))
 
+	# checking for slope when sliding
+	
+func is_on_slope() -> bool:
+	if not is_on_floor():
+		return false
+	var floor_normal := get_floor_normal()
+	var slope_angle := floor_normal.angle_to(Vector3.UP)
+	
+	return slope_angle > deg_to_rad(17)
+	
+func is_moving_uphill() -> bool:
+	if not is_on_slope():
+		return false
+	
+	var floor_normal := get_floor_normal()
+	var movement_direction := Vector3(velocity.x, 0, velocity.z).normalized()
+	
+	# Get the uphill direction (opposite to the downhill slope)
+	var downhill_direction := Vector3(floor_normal.x, 0, floor_normal.z).normalized()
+	var uphill_direction := -downhill_direction
+	
+	# Check if movement direction aligns with uphill direction
+	var dot_product := movement_direction.dot(uphill_direction)
+	
+	# If dot product > 0.5, we're moving more uphill than not (~60 degree threshold)
+	return dot_product > 0.5
 	# walking on stairs
 
 func is_surface_too_steep(normal : Vector3) -> bool:
@@ -132,18 +182,100 @@ func _run_body_test_motion(from : Transform3D, motion : Vector3,  result : Physi
 		params.motion = motion
 		return PhysicsServer3D.body_test_motion(player_v2.get_rid(), params, result)
 		
+		
+# wallrunning
+func process_wallrun() -> void:
+	if can_wallrun:
+		if is_on_wall() and ((wall_check_ray_lowR.is_colliding() and wall_check_ray_highR.is_colliding()) or (wall_check_ray_highL.is_colliding() and wall_check_ray_lowL.is_colliding())) and Input.is_action_pressed("move_forward") and Input.is_action_pressed("sprint"):
+			dashing = false
+			crouching = false
+			var collision := get_slide_collision(0)
+			var normal := collision.get_normal()
+			
+			var wallrun_dir := Vector3.UP.cross(normal)
+			var player_view_dir := -camera_3d.global_transform.basis.z
+			var dot := wallrun_dir.dot(player_view_dir)
+			if dot < 0:
+				wallrun_dir = -wallrun_dir
+				
+			var wallrun_axis_2d := Vector2(wallrun_dir.x, wallrun_dir.z)
+			var view_dir_2d := Vector2(player_view_dir.x, player_view_dir.z)
+			var angle := wallrun_axis_2d.angle_to(view_dir_2d)
+			
+			angle = rad_to_deg(angle)
+			
+			if dot < 0:
+				angle = -angle
+				
+			if angle > 85:
+				wallrunning = false
+				return
+				
+			wallrun_dir += -normal * 0.01
+			
+			wallrunning = true
+			
+			side = get_side(collision.get_position())
+			
+			velocity.y = -0.01
+			direction = wallrun_dir
+		
+		else:
+			wallrunning = false
+			
+			
+			
+func process_wallrun_rotation(delta: float) -> void:
+		if wallrunning:
+			if side == "RIGHT":
+				wallrun_current_angle += delta * 60
+				wallrun_current_angle = clamp(wallrun_current_angle, -wallrun_angle, wallrun_angle)
+			elif side == "LEFT":
+				wallrun_current_angle -= delta * 60
+				wallrun_current_angle = clamp(wallrun_current_angle, -wallrun_angle, wallrun_angle)
+			
+		else:
+			if wallrun_current_angle > 0:
+				wallrun_current_angle -= delta * 40
+				wallrun_current_angle = max(0, wallrun_current_angle)
+			elif wallrun_current_angle < 0:
+				wallrun_current_angle += delta * 40
+				wallrun_current_angle = min(wallrun_current_angle, 0)
+		
+		wall_run_cam.rotation_degrees = Vector3(0,0,1) * wallrun_current_angle
+
+func get_side(point: Vector3) -> String:
+	point = to_local(point)
+	
+	if point.x > 0:
+		return "RIGHT"
+	elif point.x < 0:
+		return "LEFT"
+	else: return "CENTER"
+	
 func _physics_process(delta: float) -> void:
 	
 	# movement input to use for sliding checking and for direction.
 	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_backwards")
-
 	# Gravity
 	if not is_on_floor():
 		velocity += get_gravity() * delta
+		wallrun_delay = clamp(wallrun_delay - delta, 0, wallrun_delay_default)
+		if wallrun_delay == 0:
+			can_wallrun = true
+		
 	else:
 		jumps = 2
 		_last_frame_was_on_floor = Engine.get_physics_frames()
+		can_wallrun = false
+		wallrunning = false
+		wallrun_jump = false
+		wallrun_delay = wallrun_delay_default
 	
+	process_wallrun()
+	process_wallrun_rotation(delta)
+	
+		
 	# dashing 
 		
 	if Input.is_action_just_pressed("dash") and can_dash:
@@ -171,15 +303,40 @@ func _physics_process(delta: float) -> void:
 		jumps -= 1
 		velocity.y = JUMP_VELOCITY * 1.2
 		sliding = false
+		
+	# jumping while wallrunning
+	
+	if Input.is_action_just_pressed("jump") and wallrunning:
+		can_wallrun = false
+		wallrunning = false
+		dashing = false
+		jumps += 1
+		velocity = Vector3.ZERO
+		
+		velocity.y = JUMP_VELOCITY * wall_jump_vertical
+		wallrun_jump = true
+
+		if side == "LEFT":
+			wall_jump_dir = global_transform.basis.x * wall_jump_horizontal
+		elif side == "RIGHT":
+			wall_jump_dir = -global_transform.basis.x * wall_jump_horizontal
+		
+		wall_jump_dir *= wall_jump_factor
+	
+		direction = (direction * (1 - wall_jump_factor)) + wall_jump_dir
+		get_tree().create_timer(0.2).timeout.connect(func() -> void: wallrun_jump = false)
+
+	
 	
 	# Crouching and Sprinting (note crouching is dominant over sprinting)
-	if Input.is_action_pressed("crouch") || sliding:
+	if (Input.is_action_pressed("crouch") || sliding) and not wallrunning:
 		
 		current_speed = lerp(current_speed,crouching_speed, lerp_speed * delta)
 		head.position.y = lerp(head.position.y, .3, lerp_speed * delta)
 		
 		standing_col.disabled = true
 		crouching_collision.disabled = false
+		crouching = true
 		
 		# start sliding logic if sprinting in a direction while crouching
 		if sprinting and input_dir != Vector2.ZERO and is_on_floor():
@@ -212,12 +369,33 @@ func _physics_process(delta: float) -> void:
 	# handling sliding time ending
 	
 	if sliding:
-		slide_timer -= delta
+	# Only decrement timer when NOT on a slope
+		if not is_on_slope():
+			slide_timer -= delta
+			# Reset slide speed to normal when back on flat ground
+			current_slide_speed = lerp(current_slide_speed, slide_speed, delta * lerp_speed)
+			
+		elif is_moving_uphill():
+			current_slide_speed = max(current_slide_speed - (uphill_deceleration * delta), min_slide_speed)
+		
+			# Stop sliding if speed gets too low
+			if current_slide_speed <= min_slide_speed:
+				sliding = false
+				current_slide_speed = slide_speed
+			else:
+				# Timer counts down normally when going uphill
+				slide_timer -= delta
+		else:
+			# Accelerate while on slope
+			current_slide_speed = min(current_slide_speed + (slope_acceleration * delta), max_slope_speed)
+		
 		camera_3d.rotation.z = lerp(camera_3d.rotation.z,-deg_to_rad(3.0), lerp_speed * delta)
 		if slide_timer <= 0:
 			sliding = false
+			current_slide_speed = slide_speed  # Reset to default when slide ends
 	else:
 		camera_3d.rotation.z = lerp(camera_3d.rotation.z,-deg_to_rad(0.0), lerp_speed * delta)
+		current_slide_speed = slide_speed  # Reset to default when not sliding
 			
 			
 	# headbob
@@ -259,7 +437,7 @@ func _physics_process(delta: float) -> void:
 
 	if sliding:
 		direction = (transform.basis * Vector3(slide_vector.x,0, slide_vector.y)).normalized()
-		current_speed = (slide_timer + 0.1) * slide_speed
+		current_speed = current_slide_speed
 		
 	if dashing:
 		direction = -player_v2.transform.basis.z.normalized()

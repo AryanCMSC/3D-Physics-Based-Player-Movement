@@ -1,0 +1,57 @@
+[gd_scene load_steps=4 format=3 uid="uid://dbwogjkxc6f7a"]
+
+[ext_resource type="Script" uid="uid://d3jam6q0i653i" path="res://Scripts/playerv2.gd" id="1_hkyy8"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_1nt8m"]
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hkyy8"]
+height = 1.0
+
+[node name="PlayerV2" type="CharacterBody3D"]
+script = ExtResource("1_hkyy8")
+current_speed = null
+mouse_sens = null
+jumps = null
+FOV = null
+
+[node name="StandingCol" type="CollisionShape3D" parent="."]
+shape = SubResource("CapsuleShape3D_1nt8m")
+disabled = true
+
+[node name="CrouchingCollision" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.516789, 0)
+shape = SubResource("CapsuleShape3D_hkyy8")
+
+[node name="Head" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
+
+[node name="wall_run_cam" type="Node3D" parent="Head"]
+
+[node name="head_bobber" type="Node3D" parent="Head/wall_run_cam"]
+
+[node name="Camera3D" type="Camera3D" parent="Head/wall_run_cam/head_bobber"]
+
+[node name="crouch_ray" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.24794, 0)
+
+[node name="stairs_ahead_ray" type="RayCast3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.51195, -0.785619)
+target_position = Vector3(0, -0.55, 0)
+
+[node name="stairs_below_ray" type="RayCast3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+target_position = Vector3(0, -0.75, 0)
+
+[node name="WallCheckRayHighR" type="RayCast3D" parent="."]
+transform = Transform3D(-4.37114e-08, -0.28, 0, 1, -1.22392e-08, 0, 0, 0, 1, 0.4, 0.6, 0)
+
+[node name="WallCheckRayLowR" type="RayCast3D" parent="."]
+transform = Transform3D(-4.37114e-08, -0.2, 0, 1, -8.74228e-09, 0, 0, 0, 1, 0.4, -0.3, 0)
+
+[node name="WallCheckRayHighL" type="RayCast3D" parent="."]
+transform = Transform3D(4.37114e-08, 0.28, -8.74228e-08, 1, -1.22392e-08, 0, -3.82137e-15, -2.44784e-08, -1, -0.4, 0.6, 0)
+
+[node name="WallCheckRayLowL" type="RayCast3D" parent="."]
+transform = Transform3D(4.37114e-08, 0.2, -8.74228e-08, 1, -8.74228e-09, 0, -3.82137e-15, -1.74846e-08, -1, -0.400112, -0.3, 0)

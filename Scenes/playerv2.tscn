@@ -21,9 +21,11 @@ shape = SubResource("CapsuleShape3D_hkyy8")
 [node name="Head" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8, 0)
 
-[node name="head_bobber" type="Node3D" parent="Head"]
+[node name="wall_run_cam" type="Node3D" parent="Head"]
 
-[node name="Camera3D" type="Camera3D" parent="Head/head_bobber"]
+[node name="head_bobber" type="Node3D" parent="Head/wall_run_cam"]
+
+[node name="Camera3D" type="Camera3D" parent="Head/wall_run_cam/head_bobber"]
 
 [node name="crouch_ray" type="RayCast3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.24794, 0)
@@ -37,3 +39,15 @@ target_position = Vector3(0, -0.55, 0)
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
 target_position = Vector3(0, -0.75, 0)
+
+[node name="WallCheckRayHighR" type="RayCast3D" parent="."]
+transform = Transform3D(-4.37114e-08, -0.28, 0, 1, -1.22392e-08, 0, 0, 0, 1, 0.485338, 0.6, 0)
+
+[node name="WallCheckRayLowR" type="RayCast3D" parent="."]
+transform = Transform3D(-4.37114e-08, -0.2, 0, 1, -8.74228e-09, 0, 0, 0, 1, 0.50167, -0.3, 0)
+
+[node name="WallCheckRayHighL" type="RayCast3D" parent="."]
+transform = Transform3D(4.37114e-08, 0.28, -8.74228e-08, 1, -1.22392e-08, 0, -3.82137e-15, -2.44784e-08, -1, -0.485464, 0.6, 0)
+
+[node name="WallCheckRayLowL" type="RayCast3D" parent="."]
+transform = Transform3D(4.37114e-08, 0.2, -8.74228e-08, 1, -8.74228e-09, 0, -3.82137e-15, -1.74846e-08, -1, -0.483935, -0.3, 0)

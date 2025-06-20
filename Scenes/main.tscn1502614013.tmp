@@ -1,0 +1,118 @@
+[gd_scene load_steps=8 format=3 uid="uid://cvkpiil8726ne"]
+
+[ext_resource type="PackedScene" uid="uid://dbwogjkxc6f7a" path="res://Scenes/playerv2.tscn" id="1_jjgbg"]
+[ext_resource type="PackedScene" uid="uid://dj3dtyg3yb37v" path="res://Scenes/CSGStairMaker3D.tscn" id="2_bo1nx"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7u77a"]
+sky_top_color = Color(0.0698439, 0.450911, 0.802158, 1)
+sky_horizon_color = Color(0.497855, 0.633162, 0.667347, 1)
+ground_bottom_color = Color(0.0543476, 0.214506, 0, 1)
+ground_horizon_color = Color(0.497855, 0.633162, 0.667347, 1)
+energy_multiplier = 1.45
+
+[sub_resource type="Sky" id="Sky_jjgbg"]
+sky_material = SubResource("ProceduralSkyMaterial_7u77a")
+
+[sub_resource type="Environment" id="Environment_bo1nx"]
+background_mode = 2
+sky = SubResource("Sky_jjgbg")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jjgbg"]
+albedo_color = Color(0.449017, 0.232616, 0.129409, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_bo1nx"]
+
+[node name="World" type="Node3D"]
+
+[node name="worldenv" type="Node3D" parent="."]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="worldenv"]
+environment = SubResource("Environment_bo1nx")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="worldenv"]
+transform = Transform3D(-0.626076, 0.69225, -0.358913, -0.471303, 0.0307497, 0.881435, 0.62121, 0.721002, 0.307008, 0, 54, 0)
+shadow_enabled = true
+
+[node name="Map Assets" type="CSGCombiner3D" parent="."]
+use_collision = true
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="Map Assets"]
+size = Vector3(34, 1, 130)
+material = SubResource("StandardMaterial3D_jjgbg")
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(3.59965, 0, 0, 0, 2.17165, 0, 0, 0, 7.16396, -13.617, 1.5, 16.762)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(8.75, 0, 0, 0, 6.2699, 0, 0, 0, 4.14, -11, 3.74, 25.757)
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(6.4125, 0, 0, 0, 20.8856, 0, 0, 0, 5.36633, -4, 1, 18)
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(6.4125, 0, 0, 0, 19.8413, 0, 0, 0, 5.36633, -4, 6, 8)
+
+[node name="CSGBox3D6" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(-5.84, 0, 0, 0, -0.162, 0, 0, 0, 4.6512, -4.107, 1.98022, 12.989)
+
+[node name="CSGBox3D7" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(-6.4978, 0, 0, 0, -0.00272098, 0, 0, 0, 7.67586, -4.46836, 7.84721, 18.3851)
+size = Vector3(1.61768, 16, 1)
+
+[node name="CSGBox3D8" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(5.4569, 0, 0, 0, 0.0209952, 0, 0, 0, 5.7276, -9.6155, 4.85625, 28.4034)
+size = Vector3(1.61768, 16, 1)
+
+[node name="CSGBox3D9" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(5.4569, 0, 0, 0, 0.0209952, 0, 0, 0, 5.7276, -3.60998, 10.5929, 6.25447)
+size = Vector3(2, 16, 1)
+
+[node name="CSGBox3D11" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(-4.90056, 0, 0, 0, 0.00035264, 0, 0, 0, 29.5249, -7.66462, 13.5405, -14.7167)
+size = Vector3(1.26855, 16, 1)
+
+[node name="CSGBox3D10" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(1, 0, 0, 0, 5.3352, 0, 0, 0, 1, 8.08409, 3.1676, -30.8205)
+
+[node name="CSGBox3D12" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(1, 0, 0, 0, 5.3352, 0, 0, 0, 1, 10.6308, 3.1676, -35)
+
+[node name="CSGBox3D13" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(3.1, 0, 0, 0, 5.3352, 0, 0, 0, 3.4, 6.08409, 3.1676, -40)
+
+[node name="CSGBox3D14" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(18, 0, 0, 0, 5.85, 0, 0, 0, 1.5, 0, 3.425, 46)
+
+[node name="CSGBox3D15" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(-7.86805e-07, 0, 1.5, 0, 5.85, 0, -18, 0, -6.55671e-08, 8.41741, 3.425, 54.3)
+
+[node name="CSGBox3D16" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(0.365086, 0, 0, 0, 4.6, 0, 0, 0, 8.80559, -12.074, 3.59068, -18.9799)
+
+[node name="CSGBox3D17" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(0.365086, 0, 0, 0, 4.6, 0, 0, 0, 8.80559, -6.07399, 3.59068, -28.9799)
+
+[node name="CSGBox3D18" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(0.365086, 0, 0, 0, 4.6, 0, 0, 0, 8.80559, -12.074, 3.59068, -39.9799)
+
+[node name="CSGMesh3D" type="CSGMesh3D" parent="Map Assets"]
+transform = Transform3D(0.365086, 0, 0, 0, 4.6, 0, 0, 0, 8.80559, -3.07399, 3.59068, -51.9799)
+mesh = SubResource("BoxMesh_bo1nx")
+
+[node name="CSGBox3D19" type="CSGBox3D" parent="Map Assets"]
+transform = Transform3D(-1.59584e-08, 4.6, 0, -0.365086, -2.01072e-07, 0, 0, 0, 8.80559, -2.074, 1.59682, -16.9799)
+
+[node name="PlayerV2" parent="." instance=ExtResource("1_jjgbg")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -9, 2, 2)
+current_speed = 5.0
+mouse_sens = 0.25
+jumps = 2
+FOV = 70
+
+[node name="CSGStairMaker3D" parent="." instance=ExtResource("2_bo1nx")]
+transform = Transform3D(-0.101985, 0, 3.8351, 0, 4.18376, 0, -7.89587, 0, -0.0495347, 8, 3.28122, -23)
+use_collision = true
+size = Vector3(1, 1.32953, 1)
+num_stairs = 15
