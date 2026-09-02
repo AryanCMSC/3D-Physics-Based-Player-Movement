@@ -1,2 +1,1 @@
-# G.N.A.T
-first game project
+First Game Project, think movement akin to Titanfall, BO3, Straftat.
